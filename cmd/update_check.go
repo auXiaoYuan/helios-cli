@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	npmLatestURL = "https://registry.npmjs.org/helios-cli/latest"
+	npmLatestURL = "https://registry.npmjs.org/@yinheyuan.helios%2Fhelios-cli/latest"
 	cacheTTL     = 24 * time.Hour
 	httpTimeout  = 1500 * time.Millisecond
 	reportWait   = 250 * time.Millisecond
@@ -78,7 +78,7 @@ func reportUpdate(ch <-chan updateResult, currentVersion string) {
 		}
 		fmt.Fprintf(os.Stderr,
 			"\n[helios-cli] new version available: %s (current %s)\n"+
-				"            run: npm install -g helios-cli@latest\n",
+				"            run: npm install -g @yinheyuan.helios/helios-cli@latest\n",
 			res.latest, currentVersion,
 		)
 	case <-time.After(reportWait):
