@@ -1,0 +1,34 @@
+{
+  "name": "helios-cli",
+  "version": "0.1.0",
+  "description": "helios-cli: a unified CLI for backend, ai and finance domains (Go binary distributed via npx).",
+  "bin": {
+    "helios-cli": "npm/bin.js"
+  },
+  "scripts": {
+    "postinstall": "node npm/install.js"
+  },
+  "files": [
+    "npm/bin.js",
+    "npm/install.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/auXiaoYuan/helios-cli.git"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "cobra",
+    "helios"
+  ],
+  "helios": {
+    "binaryVersion": "0.1.0",
+    "releaseBase": "https://github.com/auXiaoYuan/helios-cli/releases/download"
+  }
+}

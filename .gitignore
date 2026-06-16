@@ -1,0 +1,11 @@
+# Build outputs
+/dist/
+/helios-cli
+/helios-cli.exe
+
+# Downloaded binary populated by `npm install` / `postinstall`
+/npm/bin/
+
+# Node
+node_modules/
+npm-debug.log
