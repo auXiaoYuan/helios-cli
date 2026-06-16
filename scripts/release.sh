@@ -58,9 +58,13 @@ pkg.helios.binaryVersion = ver;
 fs.writeFileSync(file, JSON.stringify(pkg, null, 2) + '\n');
 NODE
 
-# 4. 提交 + 打 tag
+# 4. 提交 + 打 tag（如果 package.json 没有变化就跳过 commit）
 git add package.json
-git commit -m "chore(release): ${TAG}"
+if git diff --cached --quiet -- package.json; then
+  echo "==> package.json already at ${VERSION}, skipping commit"
+else
+  git commit -m "chore(release): ${TAG}"
+fi
 git tag -a "${TAG}" -m "${TAG}"
 
 # 5. 推送（除非 dry-run）
@@ -68,7 +72,8 @@ if [[ "$DRY_RUN" == "--dry-run" ]]; then
   echo "==> dry-run mode, NOT pushing. Inspect with:"
   echo "    git log -1"
   echo "    git show ${TAG}"
-  echo "    # to undo: git tag -d ${TAG} && git reset --hard HEAD~1"
+  echo "    # to undo tag:    git tag -d ${TAG}"
+  echo "    # to undo commit: git reset --hard HEAD~1   (only if a release commit was created)"
   exit 0
 fi
 
