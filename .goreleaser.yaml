@@ -1,0 +1,42 @@
+# GoReleaser config — produces artifacts whose names match `npm/install.js`.
+# Run locally: `goreleaser release --clean` (after creating a `vX.Y.Z` git tag).
+# Or wire it into a GitHub Actions workflow.
+
+version: 2
+
+project_name: helios-cli
+
+builds:
+  - id: helios-cli
+    main: ./
+    binary: helios-cli
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ignore:
+      - goos: windows
+        goarch: arm64
+
+archives:
+  - id: helios-cli
+    # Important: this name template MUST match PLATFORM_MAP in npm/install.js
+    name_template: "{{ .ProjectName }}_{{ .Os }}_{{ .Arch }}"
+    formats: ["tar.gz"]
+    format_overrides:
+      - goos: windows
+        formats: ["zip"]
+    files:
+      - LICENSE
+      - README.md
+
+checksum:
+  name_template: "checksums.txt"
+
+release:
+  draft: false
