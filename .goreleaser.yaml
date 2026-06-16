@@ -12,6 +12,13 @@ builds:
     binary: helios-cli
     env:
       - CGO_ENABLED=0
+    # 注入版本号到 cmd 包，让 `helios-cli --version` 与发版 tag 一致，
+    # 同时供启动时的「检查更新」逻辑做对比。
+    ldflags:
+      - -s -w
+      - -X github.com/auXiaoYuan/helios-cli/cmd.version={{ .Version }}
+      - -X github.com/auXiaoYuan/helios-cli/cmd.commit={{ .Commit }}
+      - -X github.com/auXiaoYuan/helios-cli/cmd.date={{ .Date }}
     goos:
       - linux
       - darwin

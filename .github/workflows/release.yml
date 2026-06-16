@@ -1,7 +1,8 @@
 name: release
 
-# 推送 vX.Y.Z 形式的 tag 时自动跑 GoReleaser，
-# 产出多平台二进制并上传到 GitHub Releases。
+# 推送 vX.Y.Z 形式的 tag 时触发：
+# 1. goreleaser 出多平台二进制并上传到 GitHub Releases
+# 2. npm-publish job 用 tag 名同步 package.json 版本，再发布到 npm registry
 # 资产命名由 .goreleaser.yaml 控制，必须与 npm/install.js 的 PLATFORM_MAP 对齐。
 
 on:
@@ -35,3 +36,40 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  npm-publish:
+    # 必须等 goreleaser 把资产传完，否则用户安装时 postinstall 会 404
+    needs: goreleaser
+    runs-on: ubuntu-latest
+    # provenance 需要 id-token 写权限
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Sync package.json version with tag
+        # 用 tag 作为权威版本号：避免 commit 里忘改 package.json 导致 npm 版本和二进制版本错位
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "syncing package.json -> ${VERSION}"
+          node -e "
+            const fs = require('fs');
+            const p = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            p.version = '${VERSION}';
+            p.helios = p.helios || {};
+            p.helios.binaryVersion = '${VERSION}';
+            fs.writeFileSync('package.json', JSON.stringify(p, null, 2) + '\n');
+          "
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
