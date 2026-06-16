@@ -1,6 +1,6 @@
 {
   "name": "@yinheyuan.helios/helios-cli",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "helios-cli: a unified CLI for backend, ai and finance domains (Go binary distributed via npx).",
   "bin": {
     "helios-cli": "npm/bin.js"
@@ -28,7 +28,7 @@
     "helios"
   ],
   "helios": {
-    "binaryVersion": "0.1.0",
+    "binaryVersion": "0.1.2",
     "releaseBase": "https://github.com/auXiaoYuan/helios-cli/releases/download"
   }
 }
